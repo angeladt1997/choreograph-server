@@ -10,7 +10,7 @@ function makeGraphusersArray() {
     {
       id: 2,
       username: 'test-user-2',    
-      password: 'password'
+      password: 'passwo4rd'
       
     },
     {
