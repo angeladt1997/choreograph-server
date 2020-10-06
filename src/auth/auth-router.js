@@ -10,7 +10,7 @@ authRouter
   .post(jsonBodyParser, async (req, res, next) => {
     const { username, password } = req.body
     const loginUser = { username, password }
-
+      console.log('login attempted')
     for (const [key, value] of Object.entries(loginUser))
       if (value == null)
         return res.status(400).json({
@@ -49,6 +49,13 @@ authRouter
     } catch (error) {
       next(error)
     }
+  })
+
+  authRouter
+  .route('/tato')
+  .get((req, res, next) => {
+    console.log('damn she thique')  
+    res.send('tato')
   })
 
   .put(requireAuth, (req, res) => {
