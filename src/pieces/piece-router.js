@@ -1,26 +1,51 @@
-//const { Assertion } = require('chai')
 const express = require('express')
 const PieceService = require('./piece-service')
 const { requireAuth } = require('../middleware/jwt-auth')
-//const stepList = require('./steps_lists')
-
+const {DATABASE_URL} = require('../config')
+const knex = require('knex')
+const db = knex({
+  client:'pg',
+  connection: DATABASE_URL
+})
 const pieceRouter = express.Router()
 const jsonBodyParser = express.json()
-
-
+//const stepList = require('./steps_lists')
 
 pieceRouter
   .route('/')
-  .all(requireAuth)
+  //.all(requireAuth)
   .get((req, res, next) => {
     PieceService.getPiecesWithUser( 
       req.app.get('db'),
       req.user
       )
     .then(assignedpieces => {
-      res.status(200).json(assignedpieces);
+      //res.status(200).json(assignedpieces);
+      res.send('getting to here?')
     })
     .catch(next)
+  })
+
+  pieceRouter
+    .route('/ugh')
+    .get((req, res, next) => {
+      PieceService.getPieces(
+        req.app.get('db')
+      )
+      .then(assignedpieces => {
+        res.status(200).json(assignedpieces)
+      })
+      .catch(next)
+    })
+
+pieceRouter
+  .route('/sweetTato')
+  .get(async (req, res) => {
+   // res.send('Yummy')
+    //const getShit = db
+   // console.log(await getShit.raw("SELECT * FROM assignedpieces;"))
+    res.send(DATABASE_URL)
+
   })
   // .post(jsonBodyParser, (req, res, next) => {
   //   PieceService.createPieceForUser( 
