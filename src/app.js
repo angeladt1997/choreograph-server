@@ -22,6 +22,7 @@ app.use(cors())
 
  app.use('/api/auth', authRouter)
  app.use('/api/graphusers', usersRouter)
+
  app.use('/api/piece', pieceRouter)
 
 
@@ -39,6 +40,7 @@ const epStart = '/';
   
      response = { error };
   }
+  console.log(error)
   res.status(500).json(response);
  });
 

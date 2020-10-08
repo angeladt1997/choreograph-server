@@ -12,7 +12,8 @@
 		"predeploy": "npm audit && npm run migrate:production",
 		"deploy": "git push heroku master",
 		"postdeploy": "npm run migrate:production",
-		"seed": "psql -U postgres -d choreograph -f ./seeds/seed.graph-tables.sql",
+    "seed": "psql -U postgres -d choreograph -f ./seeds/seed.graph-tables.sql",
+    "seed:deploy": "psql -U qokrhthfsoiybm -d dfhn5m8seuaaqt -f ./seed/seed.graph-tables.sql",
 		"seed:production": "pg:psql -f ./seeds/seed.graph-tables.sql"
 	},
 	"keywords": [],
@@ -35,7 +36,6 @@
 		"xss": "^1.0.8"
 	},
 	"devDependencies": {
-		"chai": "^4.2.0",
 		"mocha": "^8.1.1",
 		"nodemon": "^2.0.4",
 		"supertest": "^4.0.2"
