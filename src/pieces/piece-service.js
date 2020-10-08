@@ -10,7 +10,7 @@ const PieceService = {
   getPiecesWithUser(db, user) {
     const pieces = db('assignedpieces')
       .where({ user_id: user.id })
-      console.log('getting to here?')
+      console.log(pieces)
       return (
         pieces
       );
@@ -23,17 +23,6 @@ const PieceService = {
         pieces
       );
   },
-  // getPieces(db) {
-  //   return db
-  //     .from('assignedpieces')
-  //     .select(
-  //       'assignedpieces.id',
-  //       'assignedpieces.user_id',
-  //       'assignedpieces.piece'
-  //     ) 
-  //     .where('assignedpieces.id', assignedpieces_id)
-  //     .first()
-  // },
  
   verifyJwt(token) {
     return jwt.verify(token, config.JWT_SECRET, {
