@@ -13,7 +13,7 @@ const jsonBodyParser = express.json()
 
 pieceRouter
   .route('/')
-  //.all(requireAuth)
+  .all(requireAuth)
   .get((req, res, next) => {
     PieceService.getPiecesWithUser( 
       req.app.get('db'),
@@ -21,22 +21,22 @@ pieceRouter
       )
     .then(assignedpieces => {
       //res.status(200).json(assignedpieces);
-      res.send('getting to here?')
+     console.log('getting to here?')
     })
     .catch(next)
   })
 
-  pieceRouter
-    .route('/ugh')
-    .get((req, res, next) => {
-      PieceService.getPieces(
-        req.app.get('db')
-      )
-      .then(assignedpieces => {
-        res.status(200).json(assignedpieces)
-      })
-      .catch(next)
-    })
+  // pieceRouter
+  //   .route('/ugh')
+  //   .get((req, res, next) => {
+  //     PieceService.getPieces(
+  //       req.app.get('db')
+  //     )
+  //     .then(assignedpieces => {
+  //       res.status(200).json(assignedpieces)
+  //     })
+  //     .catch(next)
+  //   })
 
 pieceRouter
   .route('/sweetTato')

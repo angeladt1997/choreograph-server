@@ -7,32 +7,33 @@ const db = knex({
   connection: DATABASE_URL
 })
 const PieceService = {
-  // getPiecesWithUser(db, user) {
-  //   const pieces = db('assignedpieces')
-  //     .where({ user_id: user.id })
-  //     return (
-  //       pieces
-  //     );
-  // },
-  // getPiecesWithUserAndId(db, graphusers, assignedpieces) {
-  //   const pieces = db('assignedpieces')
-  //     .where({ user_id: graphusers.id, id: assignedpieces.id })
-  //     .first()
-  //     return (
-  //       pieces
-  //     );
-  // },
-  getPieces(db) {
-    return db
-      .from('assignedpieces')
-      .select(
-        'assignedpieces.id',
-        'assignedpieces.user_id',
-        'assignedpieces.piece'
-      ) 
-      .where('assignedpieces.id', assignedpieces_id)
-      .first()
+  getPiecesWithUser(db, user) {
+    const pieces = db('assignedpieces')
+      .where({ user_id: user.id })
+      console.log('getting to here?')
+      return (
+        pieces
+      );
   },
+  getPiecesWithUserAndId(db, graphusers, assignedpieces) {
+    const pieces = db('assignedpieces')
+      .where({ user_id: graphusers.id, id: assignedpieces.id })
+      .first()
+      return (
+        pieces
+      );
+  },
+  // getPieces(db) {
+  //   return db
+  //     .from('assignedpieces')
+  //     .select(
+  //       'assignedpieces.id',
+  //       'assignedpieces.user_id',
+  //       'assignedpieces.piece'
+  //     ) 
+  //     .where('assignedpieces.id', assignedpieces_id)
+  //     .first()
+  // },
  
   verifyJwt(token) {
     return jwt.verify(token, config.JWT_SECRET, {
