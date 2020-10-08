@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 
-function makeGraphusersArray() {
+function makeUsersArray() {
   return [
     {
       id: 1,
@@ -26,29 +26,9 @@ function makeGraphusersArray() {
   ]
 }
 
-function makeGraphusersArray(graphusers) {
-  return [
-    {
-      id: 1,
-      username: 'grapherOne',
-      password: 'passwordOne',
-    },
-    {
-      id: 2,
-      username: 'grapherTwo',
-      password: 'passwordTwo',
-    },
-    {
-      id: 3,
-      username: 'grapherThree',
-      password: 'passwordThree',
-    },
-    {
-      id: 4,
-      username: 'grapherFour',
-      password: 'passwordFour',
-    },
-  ]
+function makeGraphFixtures() {
+  const testUsers = makeUsersArray()
+  return { testUsers }
 }
 
 function makeMaliciousThing(graphusers) {
@@ -75,20 +55,22 @@ function makeMaliciousThing(graphusers) {
 function cleanTables(db) {
   return db.raw(
     `TRUNCATE
-      graphusers,
-      RESTART IDENTITY CASCADE`
+      piecesteps,
+      assignedpieces,
+      graphusers
+    `
   )
 }
 
-function seedUsers(db, graphusers) {
-  const preppedUsers = graphusers.map(graphusers => ({
-    ...graphusers,
-    password: bcrypt.hashSync(graphusers.password, 1)
+function seedUsers(db, users) {
+  const preppedUsers = users.map(user => ({
+    ...user,
+    password: bcrypt.hashSync(user.password, 1)
   }))
   return db.into('graphusers').insert(preppedUsers)
     .then(() =>
       db.raw(
-        `SELECT setval('graphusers_id_seq', ?)`,
+        `SELECT setval('users_id_seq', ?)`,
         [users[users.length - 1].id],
       )
     )
@@ -122,7 +104,8 @@ function makeAuthHeader(graphusers) {
 }
 
 module.exports = {
-  makeGraphusersArray,
+  makeUsersArray,
+  makeGraphFixtures,
   makeAuthHeader,
   makeMaliciousThing,
 

@@ -6,7 +6,7 @@ const helpers = require('./test-helpers')
 describe('Auth Endpoints', function() {
   let db
 
-  const { testUsers } = helpers.makeGraphusersFixtures()
+  const { testUsers } = helpers.makeGraphFixtures()
   const testUser = testUsers[0]
 
   before('make knex instance', () => {
@@ -23,9 +23,9 @@ describe('Auth Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe(`POST /api/auth/login`, () => {
+  describe.only(`POST /api/auth/login`, () => {
     beforeEach('insert users', () =>
-      helpers.seedGraphusers(
+      helpers.seedUsers(
         db,
         testUsers,
       )
@@ -92,7 +92,7 @@ describe('Auth Endpoints', function() {
 
   describe(`POST /api/auth/refresh`, () => {
     beforeEach('insert users', () =>
-      helpers.seedGraphusers(
+      helpers.seedUsers(
         db,
         testUsers,
       )

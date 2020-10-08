@@ -9,7 +9,7 @@ describe('Pieces endpoint', function() {
   const {
     testUsers,
     testPieces,
-  } = helpers.makeGraphusersFixtures()
+  } = helpers.makeGraphFixtures()
 
   before('make knex instance', () => {
     db = knex({
