@@ -23,7 +23,7 @@ describe('Auth Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe.only(`POST /api/auth/login`, () => {
+  describe(`POST /api/auth/login`, () => {
     beforeEach('insert users', () =>
       helpers.seedUsers(
         db,
@@ -77,7 +77,6 @@ describe('Auth Endpoints', function() {
         process.env.JWT_SECRET,
         {
           subject: testUser.username,
-          expiresIn: process.env.JWT_EXPIRY,
           algorithm: 'HS256',
         }
       )
@@ -104,7 +103,6 @@ describe('Auth Endpoints', function() {
         process.env.JWT_SECRET,
         {
           subject: testUser.username,
-          expiresIn: process.env.JWT_EXPIRY,
           algorithm: 'HS256',
         }
       )

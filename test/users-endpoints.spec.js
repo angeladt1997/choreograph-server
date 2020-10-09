@@ -23,7 +23,7 @@ describe('User Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe('POST /api/users', () => {
+  describe('POST /api/graphusers', () => {
     context(`User Validation`, () => {
       beforeEach('insert users', () =>
         helpers.seedUsers(
@@ -44,7 +44,7 @@ describe('User Endpoints', function() {
           delete registerAttemptBody[field]
 
           return supertest(app)
-            .post('/api/users')
+            .post('/api/graphusers')
             .send(registerAttemptBody)
             .expect(400, {
               error: `Missing '${field}' in request body`,
@@ -58,7 +58,7 @@ describe('User Endpoints', function() {
             
           }
           return supertest(app)
-            .post('/api/users')
+            .post('/api/graphusers')
             .send(userShortPassword)
             .expect(400, { error: `Password must be longer than 8 characters` })
         })
@@ -70,7 +70,7 @@ describe('User Endpoints', function() {
           
           }
           return supertest(app)
-            .post('/api/users')
+            .post('/api/graphusers')
             .send(userLongPassword)
             .expect(400, { error: `Password must be less than 72 characters` })
         })
@@ -82,7 +82,7 @@ describe('User Endpoints', function() {
       
           }
           return supertest(app)
-            .post('/api/users')
+            .post('/api/graphusers')
             .send(userPasswordStartsSpaces)
             .expect(400, { error: `Password must not start or end with empty spaces` })
         })
@@ -94,7 +94,7 @@ describe('User Endpoints', function() {
             
           }
           return supertest(app)
-            .post('/api/users')
+            .post('/api/graphusers')
             .send(userPasswordEndsSpaces)
             .expect(400, { error: `Password must not start or end with empty spaces` })
         })
@@ -106,7 +106,7 @@ describe('User Endpoints', function() {
             
           }
           return supertest(app)
-            .post('/api/users')
+            .post('/api/graphusers')
             .send(userPasswordNotComplex)
             .expect(400, { error: `Password must contain one upper case, lower case, number and special character` })
         })
@@ -118,7 +118,7 @@ describe('User Endpoints', function() {
             
           }
           return supertest(app)
-            .post('/api/users')
+            .post('/api/graphusers')
             .send(duplicateUser)
             .expect(400, { error: `Username already taken` })
         })
@@ -131,14 +131,14 @@ describe('User Endpoints', function() {
             password: '11AAaa!!',
           }
           return supertest(app)
-            .post('/api/users')
+            .post('/api/graphusers')
             .send(newUser)
             .expect(201)
             .expect(res => {
               expect(res.body).to.have.property('id')
               expect(res.body.username).to.eql(newUser.username)
               expect(res.body).to.not.have.property('password')
-              expect(res.headers.location).to.eql(`/api/users/${res.body.id}`)
+              expect(res.headers.location).to.eql(`/api/graphusers/${res.body.id}`)
              
             })
             .expect(res =>

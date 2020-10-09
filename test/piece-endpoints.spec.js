@@ -9,6 +9,7 @@ describe('Pieces endpoint', function() {
   const {
     testUsers,
     testPieces,
+    testSteps
   } = helpers.makeGraphFixtures()
 
   before('make knex instance', () => {
@@ -25,15 +26,15 @@ describe('Pieces endpoint', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe(`POST /api/piece`, () => {
+  describe.skip(`POST /api/piece`, () => {
     beforeEach('insert users', () =>
-      helpers.seedGraphusers(
+      helpers.seedUsers(
         db,
         testUsers,
       )
     )
     beforeEach('insert pieces', () =>
-      helpers.seedAssignedpieces(
+      helpers.seedPieces(
         db,
         testPieces,
       )

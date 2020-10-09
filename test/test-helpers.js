@@ -1,4 +1,6 @@
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
 
 function makeUsersArray() {
   return [
@@ -26,9 +28,45 @@ function makeUsersArray() {
   ]
 }
 
+function makePieceArray() {
+  return [
+    {
+      id: 1,
+      user_id: 1,
+      userName: 'test-user-1',
+      piece: 'test-piece-1'
+    },
+    {
+      id: 2,
+      user_id: 1,
+      userName: 'test-user-1',
+      piece: 'test-piece-2'
+    }
+  ]
+}
+
+function makeStepArray() {
+  return [
+    {
+      id: 1,
+      user_id: 1,
+      title: 'test-steps-1',
+      content: 'step-list-1'
+    },
+    {
+      id: 2,
+      user_id: 1,
+      title: 'test-steps-2',
+      content: 'step-list-2'
+    }
+  ]
+}
+
 function makeGraphFixtures() {
   const testUsers = makeUsersArray()
-  return { testUsers }
+  const testPieces = makePieceArray()
+  const testSteps = makeStepArray()
+  return { testUsers, testPieces, testSteps }
 }
 
 function makeMaliciousThing(graphusers) {
@@ -52,13 +90,34 @@ function makeMaliciousThing(graphusers) {
 }
 
 
+// function cleanTables(db) {
+//   return db.raw(
+//     `TRUNCATE
+//       piecesteps,
+//       assignedpieces,
+//       graphusers
+//     `
+//   )
+// }
 function cleanTables(db) {
-  return db.raw(
-    `TRUNCATE
-      piecesteps,
-      assignedpieces,
-      graphusers
-    `
+  return db.transaction(trx =>
+    trx.raw(
+      `TRUNCATE
+        piecesteps,
+        assignedpieces,
+        graphusers
+      `
+    )
+    .then(() =>
+      Promise.all([
+        trx.raw(`ALTER SEQUENCE graphusers_id_seq minvalue 0 START WITH 1`),
+        trx.raw(`ALTER SEQUENCE piecesteps_id_seq minvalue 0 START WITH 1`),
+        trx.raw(`ALTER SEQUENCE assignedpieces_id_seq minvalue 0 START WITH 1`),
+        trx.raw(`SELECT setval('graphusers_id_seq', 0)`),
+        trx.raw(`SELECT setval('piecesteps_id_seq', 0)`),
+        trx.raw(`SELECT setval('assignedpieces_id_seq', 0)`),
+      ])
+    )
   )
 }
 
@@ -70,21 +129,35 @@ function seedUsers(db, users) {
   return db.into('graphusers').insert(preppedUsers)
     .then(() =>
       db.raw(
-        `SELECT setval('users_id_seq', ?)`,
+        `SELECT setval('graphusers_id_seq', ?)`,
         [users[users.length - 1].id],
       )
     )
 }
 
-function seedGraphTables(db, graphusers, assignedpieces, piecesteps = []) {
+function seedGraphTables(db, users, assignedpieces, piecesteps = []) {
   return db.transaction(async trx => {
-    await seedGraphusers(trx, graphusers)
+    await seedUsers(trx, users)
     await trx.into('assignedpieces').insert(piecesteps)
     await trx.raw(
       `SELECT setval('graphusers_id_seq', ?)`,
-      [graphusers[graphusers.length - 1].id],
+      [users[users.length - 1].id],
     )
   })
+}
+
+function seedPieces(db, testPieces) {
+  const preppedPieces = testPieces.map(piece => ({
+    ...piece
+  }))
+  return db.into('assignedpieces').insert(preppedPieces)
+    .then(() =>
+      // update the auto sequence to stay in sync
+      db.raw(
+        `SELECT setval('assignedpieces_id_seq', ?)`,
+        [testPieces[testPieces.length - 1].id],
+      )
+    )
 }
 
 
@@ -97,11 +170,17 @@ function seedMaliciousChoreograph(db, graphusers) {
     )
 }
 
-
-function makeAuthHeader(graphusers) {
-  const token = Buffer.from(`${graphusers.username}:${graphusers.password}`).toString('base64')
-  return `Basic ${token}`
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+  const token = jwt.sign({ user_id: user.id }, secret, {
+    subject: user.username,
+    algorithm: 'HS256',
+  })
+  return `Bearer ${token}`
 }
+// function makeAuthHeader(graphusers) {
+//   const token = Buffer.from(`${graphusers.username}:${graphusers.password}`).toString('base64')
+//   return `Basic ${token}`
+// }
 
 module.exports = {
   makeUsersArray,
@@ -112,5 +191,6 @@ module.exports = {
   cleanTables,
   seedGraphTables,
   seedMaliciousChoreograph,
-  seedUsers
+  seedUsers,
+  seedPieces
 }

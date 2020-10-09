@@ -51,6 +51,14 @@ authRouter
     }
   })
 
+  authRouter.post('/refresh', requireAuth, (req, res) => {
+    const sub = req.user.username
+    const payload = { user_id: req.user.id }
+    res.send({
+      authToken: AuthService.createJwt(sub, payload),
+    })
+  })
+
   authRouter
   .route('/tato')
   .get((req, res, next) => {
